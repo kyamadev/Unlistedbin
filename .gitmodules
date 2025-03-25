@@ -1,0 +1,6 @@
+[submodule "backend"]
+	path = backend
+	url = https://github.com/kyamadev/unlistedbin-api-aws.git
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/kyamadev/unlistedbin-frontend

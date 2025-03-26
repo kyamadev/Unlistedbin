@@ -1,0 +1,54 @@
+name: Update Submodules
+
+on:
+  # 毎日午前2時に実行（定期チェック）
+  schedule:
+    - cron: '0 2 * * *'
+  # 手動実行
+  workflow_dispatch:
+  # リポジトリディスパッチイベント
+  repository_dispatch:
+    types: [update_submodules]
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Pull & update submodules
+        run: |
+          git submodule update --remote --recursive
+      
+      - name: Check if there are changes
+        id: git-check
+        run: |
+          git status
+          echo "modified=$(if git status --porcelain | grep -q 'frontend\|backend'; then echo "true"; else echo "false"; fi)" >> $GITHUB_OUTPUT
+      
+      - name: Commit changes if submodules were updated
+        if: steps.git-check.outputs.modified == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Update submodules"
+          git push
+      
+      - name: Trigger frontend workflow if modified
+        if: steps.git-check.outputs.modified == 'true'
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          event-type: frontend_updated
+      
+      - name: Trigger backend workflow if modified
+        if: steps.git-check.outputs.modified == 'true'
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          event-type: backend_updated

@@ -1,0 +1,8 @@
+environment     = "dev"
+aws_region      = "ap-northeast-1"
+vpc_cidr        = "10.0.0.0/16"
+db_name         = "unlistedbindb_dev"
+api_domain_name = "api-dev.unlistedbin.com"
+ses_sender_email = "noreply@unlistedbin.com"
+frontend_url    = "https://dev.unlistedbin.com"
+cookie_domain   = "dev.unlistedbin.com"

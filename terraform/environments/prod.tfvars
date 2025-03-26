@@ -1,0 +1,8 @@
+environment     = "prod"
+aws_region      = "ap-northeast-1"
+vpc_cidr        = "10.0.0.0/16"
+db_name         = "unlistedbindb_prod"
+api_domain_name = "api.unlistedbin.com"
+ses_sender_email = "noreply@unlistedbin.com"
+frontend_url    = "https://unlistedbin.com"
+cookie_domain   = "unlistedbin.com"

@@ -1,0 +1,105 @@
+name: Backend Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'main.go'
+      - 'go.mod'
+      - 'go.sum'
+      - 'config/**'
+      - 'controllers/**'
+      - 'middleware/**'
+      - 'models/**'
+      - 'storage/**'
+      - '.github/workflows/backend.yml'
+      - 'backend/**'
+  
+  # サブモジュールの更新を検知および手動トリガー
+  workflow_dispatch:
+  repository_dispatch:
+    types: [backend_updated]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+      
+      - name: Run tests
+        run: go test ./... -v
+  
+  build-and-deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    
+    # 環境ごとに異なる設定
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
+    
+    steps:
+      - name: Checkout repository with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+      
+      - name: Build Lambda binary
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bootstrap main.go
+          zip -j function.zip bootstrap
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      
+      # 環境に基づいてLambda関数名を設定
+      - name: Set environment variables
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "LAMBDA_FUNCTION_NAME=unlistedbin-api-prod" >> $GITHUB_ENV
+          else
+            echo "LAMBDA_FUNCTION_NAME=unlistedbin-api-dev" >> $GITHUB_ENV
+          fi
+      
+      # Lambda関数を更新
+      - name: Update Lambda function
+        run: |
+          aws lambda update-function-code \
+            --function-name ${{ env.LAMBDA_FUNCTION_NAME }} \
+            --zip-file fileb://function.zip
+      
+      # API Gatewayをデプロイ（キャッシュ無効化）
+      - name: Deploy API Gateway
+        run: |
+          # 環境に応じたAPI Gateway IDとステージ名を設定
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            API_ID=${{ secrets.PROD_API_GATEWAY_ID }}
+            STAGE_NAME=prod
+          else
+            API_ID=${{ secrets.DEV_API_GATEWAY_ID }}
+            STAGE_NAME=dev
+          fi
+          
+          # デプロイを実行
+          aws apigateway create-deployment \
+            --rest-api-id $API_ID \
+            --stage-name $STAGE_NAME

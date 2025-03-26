@@ -15,9 +15,7 @@ terraform {
 resource "aws_cognito_user_pool" "unlistedbin_users" {
   name = "${var.project_name}-users-${var.environment}"
   
-  auto_verify {
-    email = true
-  }
+  auto_verified_attributes = ["email"]
   
   username_attributes      = ["email"]
   alias_attributes         = ["preferred_username"]

@@ -53,7 +53,7 @@ resource "aws_internet_gateway" "igw" {
 # ElasticIP（NATゲートウェイ用）
 resource "aws_eip" "nat" {
   count = 1
-  vpc   = true
+  domain = "vpc"
   
   tags = {
     Name        = "${var.project_name}-eip-${var.environment}"

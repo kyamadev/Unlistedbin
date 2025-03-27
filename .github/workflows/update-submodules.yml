@@ -1,0 +1,51 @@
+name: Update Submodules
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 毎日UTCの0:00に実行
+  
+  # メインブランチへのプッシュ時に実行
+  push:
+    branches:
+      - main
+  
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-submodules:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: リポジトリのチェックアウト
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: 'recursive'
+      
+      - name: Gitの設定
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+      
+      - name: サブモジュールの更新
+        run: |
+          git submodule update --remote --recursive
+      
+      - name: 変更の検出
+        id: check_changes
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "changes_detected=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes_detected=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: 変更があれば直接コミットして push
+        if: steps.check_changes.outputs.changes_detected == 'true'
+        run: |
+          git add .
+          git commit -m "サブモジュールを更新"
+          git push

@@ -47,5 +47,5 @@ jobs:
         if: steps.check_changes.outputs.changes_detected == 'true'
         run: |
           git add .
-          git commit -m "サブモジュールを更新"
+          git commit -m "Update submodules"
           git push

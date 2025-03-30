@@ -5,17 +5,21 @@
 
 # Images
 ## ダッシュボード
-自分が所有するレポジトリを選択、管理する画面。目マークを押すことで限定公開とするか非公開とするか切り替え出来る。
-![image](https://github.com/user-attachments/assets/0888f984-f9d1-4c9d-9fa3-07fe2abe97d4)
+自分が所有するレポジトリを選択、管理する画面。共有URLを有効化して限定公開とするか非公開とするか、ダウンロードを許可するか禁止するかを管理することが出来る。
+![image](https://github.com/user-attachments/assets/f9cc1b9f-82d4-45f4-b519-1b5c56c7568d)
+
 ## アップロード画面
 単一ファイルまたはzipファイルをアップロードすることが出来る。 
-![image](https://github.com/user-attachments/assets/8c4a768a-2ff4-4591-8b9e-dac0f71892c0)
+![image](https://github.com/user-attachments/assets/7b0bd3b1-0fb9-4095-8617-793833a29bda)
+
 ## ディレクトリ画面
 ディレクトリ構造ごとファイルを記録する。ユーザーは見たいファイルを選択することができる。
-![image](https://github.com/user-attachments/assets/b2213028-c7b0-4143-8da2-bde298425433)
+![image](https://github.com/user-attachments/assets/2673f421-0931-46a8-98bc-042e9eae0483)
+
 ## コードプレビュー画面
 例えば、Flutterで使われるdartファイルはGoogle DriveやDropboxではプレビューできず、ダウンロードが必要となるが、このアプリではプレビューすることが出来る。
-![image](https://github.com/user-attachments/assets/5a7eded2-727b-4e1c-9931-b9a6858e88ba)
+![image](https://github.com/user-attachments/assets/8297d865-5d54-46ac-867f-2168dfdb6d63)
+
 ## 403エラー画面
 所有者のアカウントでログインしていなければ、非公開設定のファイルを見ることは出来ない。
 ![image](https://github.com/user-attachments/assets/19295937-fbe7-47cf-9317-f39320f12098)

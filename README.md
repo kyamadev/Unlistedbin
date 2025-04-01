@@ -18,7 +18,8 @@
 
 ## コードプレビュー画面
 例えば、Flutterで使われるdartファイルはGoogle DriveやDropboxではプレビューできず、ダウンロードが必要となるが、このアプリではプレビューすることが出来る。
-![image](https://github.com/user-attachments/assets/8297d865-5d54-46ac-867f-2168dfdb6d63)
+![image](https://github.com/user-attachments/assets/b5d65f7f-344a-4e9e-9c33-19ff6797acd6)
+
 
 ## 403エラー画面
 所有者のアカウントでログインしていなければ、非公開設定のファイルを見ることは出来ない。
